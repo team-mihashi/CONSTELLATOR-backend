@@ -4,6 +4,7 @@ import { getRepository, getManager } from 'typeorm';
 import Constellation from '../entities/Constellation';
 import Line from '../entities/Line';
 import randomArray from '../utils/randomArray';
+import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
 class ConstellationController {
   static getConstellations = async (
@@ -41,6 +42,17 @@ class ConstellationController {
     const { name, description, lines } = req.body;
     if (!(lines && name && description)) {
       throw res.status(400).send('Lines or name or description invalid.');
+    }
+
+    // Validate request parameters
+    if (name.length < 2 || 20 < name.length) {
+      throw res.status(400).send('Name parameter is invalid.');
+    }
+    if (description.length < 2 || 100 < name.length) {
+      throw res.status(400).send('Description paramter is invalid.');
+    }
+    if (lines.length < 2 || 10 < lines.length) {
+      throw res.status(400).send('Lines parameters is invalid.');
     }
 
     // Create constellation and line repositories
